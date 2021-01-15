@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>three.js webgl - glTF loader</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link type="text/css" rel="stylesheet" href="main.css">
+	<script type="text/javascript" src="js/jquery-3.4.1.js"></script>
+
+	<script type="text/javascript" src="threejs/build/three.js"></script>
+
+	<script type="text/javascript" src="threejs/examples/js/controls/OrbitControls.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/controls/DragControls.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/loaders/OBJLoader.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/loaders/GLTFLoader.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/loaders/BasisTextureLoader.js"></script>
+
+	<!--<script src="threejs/examples/js/controls/TransformControls.js"></script>-->
+
+
+	<script type="text/javascript" src="threejs/examples/js/WebGL.js"></script>
+
+	<script type="text/javascript" src="threejs/examples/js/shaders/CopyShader.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/shaders/FXAAShader.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/postprocessing/EffectComposer.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/postprocessing/RenderPass.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/postprocessing/ShaderPass.js"></script>
+	<script type="text/javascript" src="threejs/examples/js/postprocessing/OutlinePass.js"></script>
+
+</head>
+
+<body>
+<div id="GameContainer">
+</div>
+<script>
+
+  let camera, scene, renderer;
+
+
+  var HemisphereLight1;
+  var DirectionalLight1;
+  var DirectionalLight1Helper;
+  var PointLight1;
+  var PointLight1Helper;
+  var composer, effectFXAA;
+  var outlinePass, outlinePassSelected;
+  var Outline_mouse = new THREE.Vector2();
+  var Outline_selectedObjects = [];
+  var Outline_selectedObject_temp;
+
+  var container, controls;
+
+  // Track all objects and collisions.
+  var objects = [];
+  var collisions = [];
+  var dragobjects = [];
+
+  var loader = new THREE.GLTFLoader();
+  var load_from_scene = false;
+
+  // Track click intersects.
+  var raycaster = new THREE.Raycaster();
+  var mouse = new THREE.Vector2();
+
+  var dragControls;
+
+  //create clock for timing
+  clock = new THREE.Clock();
+
+  init();
+  render();
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  function init() {
+    // Build the container
+    container = $("#GameContainer");
+
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+
+    renderer = new THREE.WebGLRenderer(); //{antialias: true}
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.gammaInput = true;
+    renderer.gammaOutput = true;
+//  renderer.gammaFactor = 3.2;
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(width, height);
+
+    container.append(renderer.domElement);
+
+    // Create the scene.
+    scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0xcccccc);
+    scene.fog = new THREE.Fog(0xcccccc, 500, 10000);
+    // scene.add(new THREE.AmbientLight(0x666666));
+
+
+    const fov = 45;
+    const aspect = (window.innerWidth) / window.innerHeight; //2;  // the canvas default
+    const near = 1; //1
+    const far = 10000; //200000
+    camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    camera.position.set(0, 75, 600);
+//  camera.lookAt(1500,200,500);
+//    main_player.add(camera);
+
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+    controls.enablePan = true;
+    controls.dampingFactor = 0.05;
+    controls.panSpeed = 0.3;
+
+    controls.screenSpacePanning = false;
+
+    controls.minDistance = 100;
+    controls.maxDistance = 1500;
+
+    controls.maxPolarAngle = Math.PI / 2;
+    controls.enableZoom = true;
+    controls.zoomSpeed = 0.6;
+    controls.enableKeys = false;
+    controls.target = new THREE.Vector3(0, 2, 0);
+
+    controls.update();
+
+    AddLights();
+
+
+    //skybox
+    var urls = ['dark-s_px.jpg', 'dark-s_nx.jpg', 'dark-s_py.jpg', 'dark-s_ny.jpg', 'dark-s_pz.jpg', 'dark-s_nz.jpg'];
+    var loaderCube = new THREE.CubeTextureLoader().setPath('./threejs/examples/textures/cube/MilkyWay/');
+    loaderCube.load(urls, function (texture) {
+      scene.background = texture;
+    });
+
+
+    const size = 3000;
+    const divisions = 30;
+
+    const gridHelper = new THREE.GridHelper(size, divisions);
+    scene.add(gridHelper);
+
+    var scaleFactor = new THREE.Vector3(10, 10, 10);
+    var AddNewObjectPoint = new THREE.Vector3(0, 0, 0);
+
+    AddNewObjectPoint = new THREE.Vector3(70, 200, 0);
+
+    var rotateObject = new THREE.Vector3(90, 180, 0);
+    loadGLTF("rocket1", "./models/rocket1/rocket1.gltf", AddNewObjectPoint, scaleFactor, rotateObject, "can_move", false, "pass_through_fixed", "no_collecting");
+
+    rotateObject = new THREE.Vector3(0, 0, 0);
+    AddNewObjectPoint = new THREE.Vector3(70, 100, 0);
+    scaleFactor = new THREE.Vector3(5, 5, 5);
+    loadGLTF("rocket2", "./models/rocket2/rocket2.gltf", AddNewObjectPoint, scaleFactor, rotateObject, "can_move", false, "pass_through_fixed", "no_collecting");
+
+    rotateObject = new THREE.Vector3(0, 180, 0);
+    AddNewObjectPoint = new THREE.Vector3(-100, 50, 0);
+
+    AddNewObjectPoint = new THREE.Vector3(70, 0, 0);
+
+    scaleFactor = new THREE.Vector3(10, 10, 10);
+    loadGLTF("rocket3", "./models/rocket3/rocket3.gltf", AddNewObjectPoint, scaleFactor, rotateObject, "can_move", false, "pass_through_fixed", "no_collecting");
+
+
+
+    // postprocessing
+    composer = new THREE.EffectComposer(renderer);
+
+    var renderPass = new THREE.RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    dragControls = new THREE.DragControls(dragobjects, camera, renderer.domElement);
+    dragControls.addEventListener('dragstart', function () {
+      console.log("drag start");
+      controls.enabled = false;
+    });
+
+    dragControls.addEventListener('dragend', function (object) {
+      console.log("drag end");
+      controls.enabled = true;
+    });
+
+    window.addEventListener('resize', onWindowResize, false);
+
+  }
+
+  function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  //
+
+  function render() {
+    let deltaTime = clock.getDelta();
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  function updateLight() {
+    DirectionalLight1.target.updateMatrixWorld();
+    DirectionalLight1Helper.update();
+    PointLight1Helper.update();
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  function AddLights() {
+
+    const skyColor = 0xB1E1FF;  // light blue
+    const groundColor = 0xB97A20;  // brownish orange
+    const HemisphereLight_intensity = 1;
+
+    HemisphereLight1 = new THREE.HemisphereLight(skyColor, groundColor, HemisphereLight_intensity);
+    scene.add(HemisphereLight1);
+
+    const color = 0xFFFFFF;
+    const DirectionalLight_intensity = 1;
+    DirectionalLight1 = new THREE.DirectionalLight(color, DirectionalLight_intensity);
+    DirectionalLight1.position.set(0, 250, 0);
+    DirectionalLight1.target.position.set(-5, 0, 0);
+    scene.add(DirectionalLight1);
+    scene.add(DirectionalLight1.target);
+
+    DirectionalLight1Helper = new THREE.DirectionalLightHelper(DirectionalLight1);
+    scene.add(DirectionalLight1Helper);
+
+
+    const PointLight1_color = 0xFFFFFF;
+    const PointLight1_intensity = 1;
+    PointLight1 = new THREE.PointLight(PointLight1_color, PointLight1_intensity, 0, 2);
+    PointLight1.position.set(0, 250, 0);
+    PointLight1.castShadow = true;
+    scene.add(PointLight1);
+
+    PointLight1.shadow.mapSize.width = 512;  // default
+    PointLight1.shadow.mapSize.height = 512; // default
+    PointLight1.shadow.camera.near = 0.5;       // default
+    PointLight1.shadow.camera.far = 1000;      // default
+
+    PointLight1Helper = new THREE.PointLightHelper(PointLight1);
+    scene.add(PointLight1Helper);
+
+    updateLight();
+  }
+
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  function drawBox(objectwidth, objectheight, objectdepth) {
+    var geometry, material, box;
+    geometry = new THREE.BoxGeometry(objectwidth, objectheight, objectdepth);
+    material = new THREE.MeshBasicMaterial({color: 0xffff00, transparent: true, opacity: 0.5, depthTest: false});
+    box = new THREE.Mesh(geometry, material);
+    dragobjects.push(box);
+    // box.position.set(position.x, position.y, position.z);
+    return box;
+  };
+
+  const STATE = { DISABLE_DEACTIVATION : 4 }
+  const FLAGS = { CF_KINEMATIC_OBJECT: 2 }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  function loadGLTF(name, model_file, position, scale, rotate, can_move, object_physics, object_collectible) {
+    var group = new THREE.Object3D();
+
+    let mass = 1;
+    var objectwidth;
+    var objectheight;
+    var objectdepth;
+
+    loader.load(model_file, function (gltf) {             // <<--------- Model Path
+      var object = gltf.scene;
+
+//    gltf.geometry.center();
+
+
+      const root = gltf.scene;
+
+      var mS = (new THREE.Matrix4()).identity();
+      //set -1 to the corresponding axis
+      mS.elements[0] = -1;
+      //mS.elements[5] = -1;
+      //mS.elements[10] = -1;
+
+      // root.applyMatrix(mS);
+
+
+      var AssignNameToFirst = true;
+      root.traverse((obj) => {
+        if (obj.isMesh && (1 === 2)) {
+
+          console.log("mesh");
+          // obj.applyMatrix(mS);
+
+//        drag_objects.push(obj);
+
+          obj.scale.set(scale.x, scale.y, scale.z);
+          obj.geometry.center();
+
+
+          var box = new THREE.Box3().setFromObject(obj);
+          var boxsize = new THREE.Vector3();
+          box.getSize(boxsize);
+
+          obj.position.x = position.x;				    //Position (x = right+ left-)
+          if (load_from_scene) {
+            obj.position.y = position.y;
+          }
+          else {
+            obj.position.y = position.y + ((Math.round(boxsize.y * 10000) / 10000) / 2);				    //Position (y = up+, down-)
+          }
+          obj.position.z = position.z;				    //Position (z = front +, back-)
+
+          if (rotate !== null) {
+            if (load_from_scene) {
+              obj.rotation.x = rotate.x;
+              obj.rotation.y = rotate.y;
+              obj.rotation.z = rotate.z;
+            }
+            else {
+              obj.rotation.x = THREE.Math.degToRad(rotate.x);
+              obj.rotation.y = THREE.Math.degToRad(rotate.y);
+              obj.rotation.z = THREE.Math.degToRad(rotate.z);
+            }
+          }
+
+//          Outline_addSelectedObject(obj);
+          // outlinePass.selectedObjects = Outline_selectedObjects;
+          SelectObject();
+        }
+
+        if (obj.type === "Scene") {
+          // if (obj.userData !== undefined) {
+          //   if (AssignNameToFirst) {
+          // console.log("!!!!!!!!!!!!!!");
+          // console.log(name);
+          // console.log(obj.uuid);
+          AssignNameToFirst = false;
+          // }
+          // }
+        }
+
+        if (obj.castShadow !== undefined) {
+          obj.castShadow = true;
+          obj.receiveShadow = true;
+        }
+      });
+
+      let model = gltf.scene;
+
+      model.userData.canMove = can_move;
+      model.userData.object_physics = object_physics;
+      model.userData.object_collectible = object_collectible;
+      model.userData.name = name;
+      model.userData.filePath = model_file;
+
+      Outline_selectedObject_temp = model;
+
+      model.name = name;
+      model.userData.isContainer = true;
+      model.castShadow = true;
+      model.receiveShadow = true;
+
+
+      var gltfbox = new THREE.Box3().setFromObject(model);
+      var temp_vector = new THREE.Vector3();
+      gltfbox.getSize(temp_vector);
+      console.log(temp_vector);
+      objectwidth = Math.floor(temp_vector.x);
+      objectheight = Math.floor(temp_vector.y);
+      objectdepth = Math.floor(temp_vector.z);
+      if (objectdepth > 20) {
+        objectdepth = 3;
+      }
+      objectwidth = objectwidth + parseInt(2);
+      objectheight = objectheight + parseInt(2);
+      objectdepth = objectdepth + parseInt(1);
+
+      if (name === "rocket1") {
+        model.position.set(0, -2, -1.5);
+        objectwidth = objectwidth - 4;
+        mass=1;
+      }
+
+      if (name === "rocket2") {
+        model.position.set(0, 0, -3);
+        mass=1;
+      }
+
+      if (name === "rocket3") {
+        model.position.set(3, 0, 0);
+        mass=0;
+      }
+
+      // model.position.set(0, -objectheight/2, 0);
+      box = drawBox(objectwidth, objectheight, objectdepth);
+
+
+      group.scale.set(scale.x, scale.y, scale.z);
+      group.position.set(position.x, position.y, position.z);
+      group.rotation.x = THREE.Math.degToRad(rotate.x);
+      group.rotation.y = THREE.Math.degToRad(rotate.y);
+      group.rotation.z = THREE.Math.degToRad(rotate.z);
+
+      group.add(box);
+      group.name = name + "_group";
+      console.log(model);
+      box.add(model);
+
+      scene.add(group);
+    });
+
+
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  function radians_to_degrees(radians) {
+    var pi = Math.PI;
+    return radians * (180 / pi);
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  function degrees_to_radians(degrees) {
+    var pi = Math.PI;
+    return degrees * (pi / 180);
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  function fitCameraToSelection(camera, controls, selection, fitOffset = 1.2) {
+
+    const box = new THREE.Box3();
+
+    for (const object of selection) box.expandByObject(object);
+
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+
+    const maxSize = Math.max(size.x, size.y, size.z);
+    const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
+    const fitWidthDistance = fitHeightDistance / camera.aspect;
+    const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
+
+    const direction = controls.target.clone()
+      .sub(camera.position)
+      .normalize()
+      .multiplyScalar(distance);
+
+//  controls.maxDistance = distance * 10;
+    controls.target.copy(center);
+
+    camera.near = distance / 100;
+    camera.far = distance * 100;
+    camera.updateProjectionMatrix();
+
+    camera.position.copy(controls.target).sub(direction);
+
+    controls.update();
+  }
+
+</script>
+
+</body>
+</html>
