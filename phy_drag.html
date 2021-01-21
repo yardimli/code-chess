@@ -34,6 +34,13 @@
 
 <script src="cannon.js"></script>
 
+
+https://playcanv.as/p/kZtPZpnH/
+https://github.com/a1studmuffin/SpaceshipGenerator
+https://github.com/jeromeetienne/threex.laser
+https://schteppe.github.io/cannon.js/examples/threejs_fps.html
+https://codepen.io/alok/pen/GPoGod
+
 <script>
 
   var world;
@@ -263,7 +270,7 @@
   function updateLight() {
     DirectionalLight1.target.updateMatrixWorld();
     //DirectionalLight1Helper.update();
-    PointLight1Helper.update();
+    //PointLight1Helper.update();
   }
 
   //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -300,8 +307,8 @@
     PointLight1.shadow.camera.near = 0.5;       // default
     PointLight1.shadow.camera.far = 1000;      // default
 
-    PointLight1Helper = new THREE.PointLightHelper(PointLight1);
-    scene.add(PointLight1Helper);
+    // PointLight1Helper = new THREE.PointLightHelper(PointLight1);
+    // scene.add(PointLight1Helper);
 
     updateLight();
   }
@@ -329,12 +336,12 @@
       scene.background = texture;
     });
 
-    // const size = 300;
-    // const divisions = 30;
-		//
-    // const gridHelper = new THREE.GridHelper(size, divisions);
-    // scene.add(gridHelper);
-		//
+    const size = 300;
+    const divisions = 30;
+
+    const gridHelper = new THREE.GridHelper(size, divisions);
+    scene.add(gridHelper);
+
 
     // camera
     const fov = 45;
@@ -423,11 +430,10 @@
     direction = 30;
     speed = 2;
     mass = 10;
-
     loadGLTF("rocket1", "./models/rocket1/rocket1.gltf", AddNewObjectPoint, scaleFactor, direction, speed, mass);
 
     scaleFactor = new THREE.Vector3(1, 1, 1);
-    AddNewObjectPoint = new THREE.Vector3(15, 7, 0);
+    AddNewObjectPoint = new THREE.Vector3(15, 37, 0);
     rotateObject = new THREE.Vector3(0, 0, 0);
     direction = 250;
     speed = 5;
@@ -435,7 +441,7 @@
     loadGLTF("rocket2", "./models/rocket2/rocket2.gltf", AddNewObjectPoint, scaleFactor, direction, speed, mass);
 
     scaleFactor = new THREE.Vector3(3, 3, 3);
-    AddNewObjectPoint = new THREE.Vector3(-25, 17, 0);
+    AddNewObjectPoint = new THREE.Vector3(-25, 47, 0);
     rotateObject = new THREE.Vector3(0, 180, 0);
     speed = 4;
     direction = -90;
@@ -908,7 +914,7 @@
     var idx = -1;
     for (var i = 0; i < bodies.length; i++) {
       if (bodies[i].name.indexOf("physical_object_rocket2_group") === 0) {
-        console.log(bodies[i].name);
+        // console.log(bodies[i].name);
 
         if (keyD) {
           bodies[i].direction -= 3;

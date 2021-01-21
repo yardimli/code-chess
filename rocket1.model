@@ -1,0 +1,20 @@
+# Made using Asset Forge (2.1.1)
+
+:materials
+
+[name:metalDark;color:RGBA(0.675, 0.710, 0.774, 1.000);scale:(1.0, 1.0);texture:Metal/scratched.png;shader:Default;valueA:0.5;valueB:0;]
+[name:metal;color:RGBA(1.000, 1.000, 1.000, 1.000);scale:(1.0, 1.0);texture:Metal/metalPlate.png;shader:Default;valueA:0.5;valueB:0;]
+[name:metalRed;color:RGBA(1.000, 1.000, 1.000, 1.000);scale:(1.0, 1.0);texture:Metal/metalPlate.png;shader:Default;valueA:0.5;valueB:0;]
+[name:_defaultMat;color:RGBA(0.965, 0.965, 0.965, 1.000);scale:(1.0, 1.0);texture:Metal/metalPlate.png;shader:Default;valueA:0.5;valueB:0;]
+[name:dark;color:RGBA(1.000, 1.000, 1.000, 1.000);scale:(1.0, 1.0);texture:Metal/metalPlate.png;shader:Default;valueA:0.5;valueB:0;]
+
+:models
+
+[name:;collection:space2;type:rocket_baseB;position:(0.0000, 0.0000, 2.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalDark+metal+metalRed;]
+[name:;collection:space2;type:rocket_fuelA;position:(0.0000, 1.0000, 2.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalRed+metalDark;]
+[name:;collection:space2;type:rocket_fuelA;position:(0.0000, 1.5000, 2.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalRed+metalDark;]
+[name:;collection:space2;type:satelliteDish;position:(0.0000, 3.3000, 2.5000);rotation:(90.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalDark+dark+_defaultMat+metal+metalRed;]
+[name:;collection:space2;type:rocket_topB;position:(0.0000, 3.7000, 2.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalRed+_defaultMat+metal;]
+[name:;collection:space2;type:rocket_fuelB;position:(0.0000, 2.7000, 2.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalDark+metal;]
+[name:;collection:space2;type:rocket_finsB;position:(0.0000, 2.0000, 2.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metal+metalRed+metalDark;]
+[name:;collection:space2;type:rover;position:(-5.0000, 0.0000, -184.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark+metal+metalRed+metalDark;]
