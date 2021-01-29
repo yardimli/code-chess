@@ -1,0 +1,524 @@
+{
+    "asset": {
+        "generator": "FBX2glTF v0.9.7",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "buffers": [
+        {
+            "byteLength": 19786548,
+            "uri": "buffer.bin"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteLength": 3733896,
+            "byteOffset": 0,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 7427004,
+            "byteOffset": 3733896,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 7427004,
+            "byteOffset": 11160900,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 68004,
+            "byteOffset": 18587904,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 269136,
+            "byteOffset": 18655908,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 269136,
+            "byteOffset": 18925044,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 58488,
+            "byteOffset": 19194180,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 233568,
+            "byteOffset": 19252668,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 233568,
+            "byteOffset": 19486236,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 4824,
+            "byteOffset": 19719804,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 19296,
+            "byteOffset": 19724628,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 19296,
+            "byteOffset": 19743924,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 2592,
+            "byteOffset": 19763220,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 10368,
+            "byteOffset": 19765812,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 10368,
+            "byteOffset": 19776180,
+            "target": 34962
+        }
+    ],
+    "scenes": [
+        {
+            "name": "Root Scene",
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "componentType": 5125,
+            "type": "SCALAR",
+            "count": 933474,
+            "bufferView": 0,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 618917,
+            "bufferView": 1,
+            "byteOffset": 0,
+            "min": [
+                -0.095636174082756,
+                -0.0171581711620092,
+                -0.0482085309922695
+            ],
+            "max": [
+                0.160100176930428,
+                0.0171581748872995,
+                0.031723327934742
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 618917,
+            "bufferView": 2,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5123,
+            "type": "SCALAR",
+            "count": 34002,
+            "bufferView": 3,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 22428,
+            "bufferView": 4,
+            "byteOffset": 0,
+            "min": [
+                -0.085302047431469,
+                -0.00974807795137167,
+                -0.0477766692638397
+            ],
+            "max": [
+                0.160261318087578,
+                0.00974807981401682,
+                0.031106049194932
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 22428,
+            "bufferView": 5,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5123,
+            "type": "SCALAR",
+            "count": 29244,
+            "bufferView": 6,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 19464,
+            "bufferView": 7,
+            "byteOffset": 0,
+            "min": [
+                -0.0963740050792694,
+                -0.00522960489615798,
+                -0.0323776267468929
+            ],
+            "max": [
+                0.112923450767994,
+                0.00522963982075453,
+                0.0272916834801435
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 19464,
+            "bufferView": 8,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5123,
+            "type": "SCALAR",
+            "count": 2412,
+            "bufferView": 9,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 1608,
+            "bufferView": 10,
+            "byteOffset": 0,
+            "min": [
+                -0.095747247338295,
+                -0.00420386763289571,
+                -0.0317324437201023
+            ],
+            "max": [
+                0.108877912163734,
+                0.00420386902987957,
+                0.00811145175248384
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 1608,
+            "bufferView": 11,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5123,
+            "type": "SCALAR",
+            "count": 1296,
+            "bufferView": 12,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 864,
+            "bufferView": 13,
+            "byteOffset": 0,
+            "min": [
+                0.0506099984049797,
+                -0.00278257601894438,
+                -0.0457448326051235
+            ],
+            "max": [
+                0.143464908003807,
+                0.0027825771830976,
+                -0.00952882599085569
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 864,
+            "bufferView": 14,
+            "byteOffset": 0
+        }
+    ],
+    "images": [
+        {
+            "name": "hull_normal.png",
+            "uri": "hull_normal.png"
+        },
+        {
+            "name": "hull_lights_emit.png",
+            "uri": "hull_lights_emit.png"
+        }
+    ],
+    "samplers": [
+        {}
+    ],
+    "textures": [
+        {
+            "name": "normalmap_texture",
+            "sampler": 0,
+            "source": 0
+        },
+        {
+            "name": "emission_color_texture",
+            "sampler": 0,
+            "source": 1
+        }
+    ],
+    "materials": [
+        {
+            "name": "hull.007",
+            "alphaMode": "OPAQUE",
+            "extras": {
+                "fromFBX": {
+                    "shadingModel": "Phong",
+                    "isTruePBR": false
+                }
+            },
+            "normalTexture": {
+                "index": 0,
+                "texCoord": 0
+            },
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.311333328485489,
+                    0.347268134355545,
+                    0.502886235713959,
+                    1.0
+                ],
+                "metallicFactor": 0.400000005960464,
+                "roughnessFactor": 0.272165536880493
+            }
+        },
+        {
+            "name": "hull_lights.007",
+            "alphaMode": "OPAQUE",
+            "extras": {
+                "fromFBX": {
+                    "shadingModel": "Phong",
+                    "isTruePBR": false
+                }
+            },
+            "normalTexture": {
+                "index": 0,
+                "texCoord": 0
+            },
+            "emissiveTexture": {
+                "index": 1,
+                "texCoord": 0
+            },
+            "emissiveFactor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.311333328485489,
+                    0.347268134355545,
+                    0.502886235713959,
+                    1.0
+                ],
+                "metallicFactor": 0.400000005960464,
+                "roughnessFactor": 0.272165536880493
+            }
+        },
+        {
+            "name": "hull_dark.007",
+            "alphaMode": "OPAQUE",
+            "extras": {
+                "fromFBX": {
+                    "shadingModel": "Phong",
+                    "isTruePBR": false
+                }
+            },
+            "normalTexture": {
+                "index": 0,
+                "texCoord": 0
+            },
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.0934000015258789,
+                    0.104180440306664,
+                    0.150865867733955,
+                    1.0
+                ],
+                "metallicFactor": 0.400000005960464,
+                "roughnessFactor": 0.272165536880493
+            }
+        },
+        {
+            "name": "exhaust_burn.007",
+            "alphaMode": "OPAQUE",
+            "extras": {
+                "fromFBX": {
+                    "shadingModel": "Phong",
+                    "isTruePBR": false
+                }
+            },
+            "emissiveFactor": [
+                0.255230039358139,
+                1.0,
+                0.422043025493622
+            ],
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929,
+                    1.0
+                ],
+                "metallicFactor": 0.400000005960464,
+                "roughnessFactor": 0.272165536880493
+            }
+        },
+        {
+            "name": "glow_disc.007",
+            "alphaMode": "OPAQUE",
+            "extras": {
+                "fromFBX": {
+                    "shadingModel": "Phong",
+                    "isTruePBR": false
+                }
+            },
+            "emissiveFactor": [
+                0.255230039358139,
+                1.0,
+                0.422043025493622
+            ],
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929,
+                    1.0
+                ],
+                "metallicFactor": 0.400000005960464,
+                "roughnessFactor": 0.272165536880493
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "Spaceship",
+            "primitives": [
+                {
+                    "material": 0,
+                    "mode": 4,
+                    "attributes": {
+                        "NORMAL": 2,
+                        "POSITION": 1
+                    },
+                    "indices": 0
+                },
+                {
+                    "material": 1,
+                    "mode": 4,
+                    "attributes": {
+                        "NORMAL": 5,
+                        "POSITION": 4
+                    },
+                    "indices": 3
+                },
+                {
+                    "material": 2,
+                    "mode": 4,
+                    "attributes": {
+                        "NORMAL": 8,
+                        "POSITION": 7
+                    },
+                    "indices": 6
+                },
+                {
+                    "material": 3,
+                    "mode": 4,
+                    "attributes": {
+                        "NORMAL": 11,
+                        "POSITION": 10
+                    },
+                    "indices": 9
+                },
+                {
+                    "material": 4,
+                    "mode": 4,
+                    "attributes": {
+                        "NORMAL": 14,
+                        "POSITION": 13
+                    },
+                    "indices": 12
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "name": "RootNode",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                1
+            ]
+        },
+        {
+            "name": "Spaceship",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                -0.707106828689575,
+                0.0,
+                0.0,
+                0.707106709480286
+            ],
+            "scale": [
+                100.0,
+                100.0,
+                100.0
+            ],
+            "mesh": 0
+        }
+    ]
+}

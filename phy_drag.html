@@ -32,14 +32,16 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/TweenMax.min.js"></script>
 
+<script type="text/javascript" src="particles/SPE.min.js"></script>
+
 <script src="cannon.js"></script>
 
 
-https://playcanv.as/p/kZtPZpnH/
-https://github.com/a1studmuffin/SpaceshipGenerator
-https://github.com/jeromeetienne/threex.laser
-https://schteppe.github.io/cannon.js/examples/threejs_fps.html
-https://codepen.io/alok/pen/GPoGod
+<!--https://playcanv.as/p/kZtPZpnH/-->
+<!--https://github.com/a1studmuffin/SpaceshipGenerator-->
+<!--https://github.com/jeromeetienne/threex.laser-->
+<!--https://schteppe.github.io/cannon.js/examples/threejs_fps.html-->
+<!--https://codepen.io/alok/pen/GPoGod-->
 
 <script>
 
@@ -73,6 +75,58 @@ https://codepen.io/alok/pen/GPoGod
   var frequency = 5;
   var freqCount = 0;
   var worldCoords = null;
+
+
+
+
+
+
+
+  ///explosion
+  var explosion_group = new SPE.Group( {
+      texture: {
+        value: THREE.ImageUtils.loadTexture( './img/sprite-explosion2.png' ),
+        frames: new THREE.Vector2( 5, 5 ),
+        loop: 1
+      },
+      depthTest: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      scale: 600
+    } ),
+    fireball = new SPE.Emitter( {
+      particleCount: 20,
+      type: SPE.distributions.SPHERE,
+      position: {
+        radius: 1
+      },
+      maxAge: { value: 2 },
+      // duration: 1,
+      activeMultiplier: 20,
+      velocity: {
+        value: new THREE.Vector3( 10 )
+      },
+      size: { value: [20, 100] },
+      color: {
+        value: [
+          new THREE.Color( 0.5, 0.1, 0.05 ),
+          new THREE.Color( 0.2, 0.2, 0.2 )
+        ]
+      },
+      opacity: { value: [0.5, 0.35, 0.1, 0] }
+    }),
+    flash = new SPE.Emitter( {
+      particleCount: 50,
+      position: { spread: new THREE.Vector3( 5, 5, 5 ) },
+      velocity: {
+        spread: new THREE.Vector3( 30 ),
+        distribution: SPE.distributions.SPHERE
+      },
+      size: { value: [2, 20, 20, 20] },
+      maxAge: { value: 2 },
+      activeMultiplier: 2000,
+      opacity: { value: [0.5, 0.25, 0, 0] }
+    } );
 
   // Initialize Three.js
   initCannon();
@@ -375,8 +429,8 @@ https://codepen.io/alok/pen/GPoGod
 
     // Adjust constraint equation parameters for ground/ground contact
     var ground_ground_cm = new CANNON.ContactMaterial(groundMaterial, groundMaterial, {
-      friction: 0.4,
-      restitution: 0.3,
+      friction: 0.1,
+      restitution: 0.1,
       contactEquationStiffness: 1e8,
       contactEquationRelaxation: 3,
       frictionEquationStiffness: 1e8,
@@ -409,8 +463,8 @@ https://codepen.io/alok/pen/GPoGod
     // The ContactMaterial defines what happens when two materials meet.
     // In this case we want friction coefficient = 0.0 when the slippery material touches ground.
     var slippery_ground_cm = new CANNON.ContactMaterial(groundMaterial, slipperyMaterial, {
-      friction: 0.02,
-      restitution: 0.3,
+      friction: 0.002,
+      restitution: 0.003,
       contactEquationStiffness: 1e8,
       contactEquationRelaxation: 3
     });
@@ -421,33 +475,29 @@ https://codepen.io/alok/pen/GPoGod
 
     var scaleFactor;
     var AddNewObjectPoint;
-    var rotateObject;
     var direction, speed, mass;
 
-    scaleFactor = new THREE.Vector3(1.5, 1.5, 1.5);
-    AddNewObjectPoint = new THREE.Vector3(30, 25, 0);
-    // rotateObject = new THREE.Vector3(90, 0, 0);
-    direction = 30;
-    speed = 2;
+    scaleFactor = new THREE.Vector3(1, 1, 1);
+    AddNewObjectPoint = new THREE.Vector3(30, 15, 0);
+    direction = 0;
+    speed = 0;
     mass = 10;
-    loadGLTF("rocket1", "./models/rocket1/rocket1.gltf", AddNewObjectPoint, scaleFactor, direction, speed, mass);
+    loadGLTF("rocket1", "./catdog15_ship.gltf", AddNewObjectPoint, scaleFactor, direction, speed, mass);
 
     scaleFactor = new THREE.Vector3(1, 1, 1);
-    AddNewObjectPoint = new THREE.Vector3(15, 37, 0);
-    rotateObject = new THREE.Vector3(0, 0, 0);
-    direction = 250;
-    speed = 5;
+    AddNewObjectPoint = new THREE.Vector3(0, 15, 0);
+    direction = 0;
+    speed = 0;
     mass = 50;
-    loadGLTF("rocket2", "./models/rocket2/rocket2.gltf", AddNewObjectPoint, scaleFactor, direction, speed, mass);
+    loadGLTF("rocket2", "./ship2.gltf", AddNewObjectPoint, scaleFactor, direction, speed, mass);
 
-    scaleFactor = new THREE.Vector3(3, 3, 3);
-    AddNewObjectPoint = new THREE.Vector3(-25, 47, 0);
-    rotateObject = new THREE.Vector3(0, 180, 0);
-    speed = 4;
-    direction = -90;
+    scaleFactor = new THREE.Vector3(1, 1, 1);
+    AddNewObjectPoint = new THREE.Vector3(-30, 15, 0);
+    speed = 0;
+    direction = 0;
     mass = 200;
 
-    loadGLTF("rocket3", "./models/rocket3/rocket3.gltf", AddNewObjectPoint, scaleFactor, direction, speed, mass);
+    loadGLTF("rocket3", "./ship4.gltf", AddNewObjectPoint, scaleFactor, direction, speed, mass);
 
 
     // cubes
@@ -524,6 +574,14 @@ https://codepen.io/alok/pen/GPoGod
     document.addEventListener("mousemove2", onMouseMove2, false);
     document.addEventListener("mousedown2", onMouseDown, true);
     document.addEventListener("mouseup2", onMouseUp, true);
+
+
+
+    //explosion
+    explosion_group.addEmitter( fireball ).addEmitter( flash );
+    console.log(explosion_group);
+    scene.add( explosion_group.mesh );
+
   }
 
 
@@ -597,6 +655,7 @@ https://codepen.io/alok/pen/GPoGod
   //----------------------------------------------------------------------------------
   function render() {
     // let deltaTime = clock.getDelta();
+    explosion_group.tick(  );
     renderer.render(scene, camera);
     // requestAnimationFrame(render);
   }
@@ -674,7 +733,7 @@ https://codepen.io/alok/pen/GPoGod
     }
 
     geometry2 = new THREE.SphereGeometry(radius / 2, 32, 32);
-    material2 = new THREE.MeshBasicMaterial({color: 0xffff00, transparent: true, opacity: 0.1, depthTest: false});
+    material2 = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.05, depthTest: false});
     sphere2 = new THREE.Mesh(geometry2, material2);
     dragobjects.push(sphere2);
     return sphere2;
@@ -724,8 +783,8 @@ https://codepen.io/alok/pen/GPoGod
           // obj.position.set(offset.x, offset.y, offset.z);
         }
       });
-      // model.rotation.x = THREE.Math.degToRad(rotate.x);
-      // model.rotation.y = THREE.Math.degToRad(rotate.y);
+      // model.rotation.x = THREE.Math.degToRad(90);
+      model.rotation.y = THREE.Math.degToRad(-90);
       // model.rotation.z = THREE.Math.degToRad(rotate.z);
 
       var gltfbox = new THREE.Box3().setFromObject(model);
@@ -742,18 +801,7 @@ https://codepen.io/alok/pen/GPoGod
       objectheight = objectheight + parseInt(2);
       objectdepth = objectdepth + parseInt(1);
 
-      if (name === "rocket1") {
-        model.position.set(0, -2, -1.5);
-        objectwidth = objectwidth - 4;
-      }
-
-      if (name === "rocket2") {
-        model.position.set(0, 0, -3);
-      }
-
-      if (name === "rocket3") {
-        model.position.set(3, 0, 0);
-      }
+      model.position.set(0, 0, 0);
 
       // model.position.set(0, -objectheight/2, 0);
       box = drawBox(objectwidth, objectheight, objectdepth);
@@ -917,13 +965,13 @@ https://codepen.io/alok/pen/GPoGod
         // console.log(bodies[i].name);
 
         if (keyD) {
-          bodies[i].direction -= 3;
+          bodies[i].direction -= 1;
           var axis = new CANNON.Vec3(0, 1, 0);
           bodies[i].quaternion.setFromAxisAngle(axis, degrees_to_radians(bodies[i].direction));
         }
 
         if (keyA) {
-          bodies[i].direction += 3;
+          bodies[i].direction += 1;
           var axis = new CANNON.Vec3(0, 1, 0);
           bodies[i].quaternion.setFromAxisAngle(axis, degrees_to_radians(bodies[i].direction));
         }
@@ -932,7 +980,7 @@ https://codepen.io/alok/pen/GPoGod
           var localForward = new CANNON.Vec3(0, 0, -1); // correct?
           var worldForward = new CANNON.Vec3();
           bodies[i].vectorToWorldFrame(localForward, worldForward);
-          var localVelocity = new CANNON.Vec3(0, 0, -0.5);
+          var localVelocity = new CANNON.Vec3(0, 0, -0.02);
           var worldVelocity = bodies[i].quaternion.vmult(localVelocity);
           worldVelocity.y = 0;
           // console.log ( worldVelocity );
@@ -945,7 +993,7 @@ https://codepen.io/alok/pen/GPoGod
           var localForward = new CANNON.Vec3(0, 0, -1); // correct?
           var worldForward = new CANNON.Vec3();
           bodies[i].vectorToWorldFrame(localForward, worldForward);
-          var localVelocity = new CANNON.Vec3(0, 0, 0.5);
+          var localVelocity = new CANNON.Vec3(0, 0, 0.02);
           var worldVelocity = bodies[i].quaternion.vmult(localVelocity);
           worldVelocity.y = 0;
           // console.log ( worldVelocity );
@@ -1014,6 +1062,14 @@ https://codepen.io/alok/pen/GPoGod
       }
     }
 
+    var idx2 = -1;
+    for (var i = 0; i < bodies.length; i++) {
+      if (bodies[i].name.indexOf("physical_object_rocket2_group") === 0) {
+        idx2 = i;
+        break;
+      }
+    }
+
     if (idx !== -1) {
 
       // console.log (bodies[idx] );
@@ -1026,7 +1082,22 @@ https://codepen.io/alok/pen/GPoGod
       worldCoords.subVectors(boundingBox.max, boundingBox.min);
       worldCoords.multiplyScalar(0.5);
       worldCoords.add(boundingBox.min);
+
+      if (idx2 !== -1) {
+        var axis = new THREE.Vector3( 0, 1, 0 );
+        var angle = degrees_to_radians(bodies[idx2].direction);
+        worldCoords.applyAxisAngle( axis, angle );
+      }
+      worldCoords.z = worldCoords.z+ boundingBox.min.z;
+
+
       worldCoords.applyMatrix4(meshes[idx].matrixWorld);
+
+      explosion_group.mesh.position.x = worldCoords.x;
+      explosion_group.mesh.position.y = worldCoords.y;
+      explosion_group.mesh.position.z = worldCoords.z;
+
+
     }
   }
 
@@ -1036,11 +1107,11 @@ https://codepen.io/alok/pen/GPoGod
       return;
     }
 
-    s.mesh.material.opacity = 1;
+    s.mesh.material.opacity = 0.5;
     s.mesh.position.x = worldCoords.x;
     s.mesh.position.y = worldCoords.y;
     s.mesh.position.z = worldCoords.z;
-    s.mesh.scale.set(0.1, 0.1, 0.1);
+    s.mesh.scale.set(0.001, 0.001, 0.001);
 
     var smokeTl = new TimelineMax();
 
@@ -1083,7 +1154,7 @@ https://codepen.io/alok/pen/GPoGod
     s.mesh.rotation.x = Math.random() * Math.PI * 2;
     s.mesh.rotation.y = Math.random() * Math.PI * 2;
     s.mesh.rotation.z = Math.random() * Math.PI * 2;
-    s.mesh.scale.set(.1, .1, .1);
+    s.mesh.scale.set(1, 1, 1);
     s.mesh.material.opacity = 0;
     s.material.needUpdate = true;
     scene.add(s.mesh);
@@ -1105,6 +1176,15 @@ https://codepen.io/alok/pen/GPoGod
     }
     freqCount++;
   }
+
+
+
+
+
+
+
+
+
 
 
 </script>
