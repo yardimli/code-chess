@@ -76,6 +76,7 @@
   var freqCount = 0;
   var worldCoords = null;
 
+  var shipVelocity = 20;
 
 
 
@@ -100,20 +101,20 @@
       position: {
         radius: 1
       },
-      maxAge: { value: 2 },
-      // duration: 1,
+      maxAge: { value: 1 },
+//      duration: 10,
       activeMultiplier: 20,
       velocity: {
-        value: new THREE.Vector3( 10 )
+        value: new THREE.Vector3( 1 )
       },
-      size: { value: [20, 100] },
+      size: { value: [10, 50] },
       color: {
         value: [
           new THREE.Color( 0.5, 0.1, 0.05 ),
           new THREE.Color( 0.2, 0.2, 0.2 )
         ]
       },
-      opacity: { value: [0.5, 0.35, 0.1, 0] }
+      opacity: { value: [0.5, 0.35, 0.2, 0] }
     }),
     flash = new SPE.Emitter( {
       particleCount: 50,
@@ -127,6 +128,80 @@
       activeMultiplier: 2000,
       opacity: { value: [0.5, 0.25, 0, 0] }
     } );
+
+  function setExplosionCoords() {
+
+    var idx = -1;
+    for (var i = 0; i < meshes.length; i++) {
+      if (meshes[i].name.indexOf("physical_object_rocket2_group") === 0) {
+        idx = i;
+        break;
+      }
+    }
+
+    var idx2 = -1;
+    for (var i = 0; i < bodies.length; i++) {
+      if (bodies[i].name.indexOf("physical_object_rocket2_group") === 0) {
+        idx2 = i;
+        break;
+      }
+    }
+
+    if (idx !== -1) {
+
+      meshes[idx].geometry.computeBoundingBox();
+      var boundingBox = meshes[idx].geometry.boundingBox;
+      worldCoords = new THREE.Vector3();
+      worldCoords.subVectors(boundingBox.max, boundingBox.min);
+      worldCoords.multiplyScalar(0.5);
+      worldCoords.add(boundingBox.min);
+
+      if (idx2 !== -1) {
+        var axis = new THREE.Vector3( 0, 1, 0 );
+        var angle = degrees_to_radians(bodies[idx2].direction);
+        worldCoords.applyAxisAngle( axis, angle );
+      }
+      worldCoords.z = worldCoords.z+ boundingBox.min.z;
+
+      //no arguments; will be initialised to (0, 0, 0)
+      const b = new THREE.Vector3();
+
+      const d = bodies[idx2].velocity.distanceTo( b );
+
+      // console.log( d );
+      shipVelocity = Math.round(d);
+      // if (shipVelocity<2) {
+      //   shipVelocity = 2;
+      // }
+
+      // explosion_group.material.transparent = shipVelocity/100;
+			//
+      // fireball.activeMultiplier = shipVelocity;
+     // explosion_group.material.needsUpdate = true;
+		 //
+      // fireball.material.needsUpdate = true;
+      // fireball.geometry.needsUpdate = true;
+      // fireball._attributesNeedRefresh = true;
+			//
+      // fireball.needsUpdate = true;
+//      console.log( explosion_group );
+
+
+
+      worldCoords.applyMatrix4(meshes[idx].matrixWorld);
+
+      explosion_group.mesh.position.x = worldCoords.x;
+      explosion_group.mesh.position.y = worldCoords.y;
+      explosion_group.mesh.position.z = worldCoords.z;
+    }
+  }
+
+
+
+
+
+
+
 
   // Initialize Three.js
   initCannon();
@@ -385,6 +460,7 @@
 
     //skybox
     var urls = ['dark-s_px.jpg', 'dark-s_nx.jpg', 'dark-s_py.jpg', 'dark-s_ny.jpg', 'dark-s_pz.jpg', 'dark-s_nz.jpg'];
+    var urls = ['leftimage.jpg', 'rightimage.jpg', 'upimage.jpg', 'downimage.jpg', 'frontimage.jpg', 'backimage.jpg'];
     var loaderCube = new THREE.CubeTextureLoader().setPath('./three/textures/cube/MilkyWay/');
     loaderCube.load(urls, function (texture) {
       scene.background = texture;
@@ -578,7 +654,7 @@
 
 
     //explosion
-    explosion_group.addEmitter( fireball ).addEmitter( flash );
+    explosion_group.addEmitter( fireball );//.addEmitter( flash );
     console.log(explosion_group);
     scene.add( explosion_group.mesh );
 
@@ -635,8 +711,9 @@
     //controls.update();
     updatePhysics();
 
-    setSmokeCoords();
-    updateSmokeArr();
+    setExplosionCoords();
+    // setSmokeCoords();
+    // updateSmokeArr();
 
     render();
   }
@@ -1004,7 +1081,7 @@
       }
     }
 
-  }, 50);
+  }, 1);
 
   //event listener
   window.addEventListener("keydown", onKeyDown, false);
@@ -1018,12 +1095,14 @@
         break;
       case 83: //s
         keyS = true;
+        fireball.activeMultiplier = 10;
         break;
       case 65: //a
         keyA = true;
         break;
       case 87: //w
         keyW = true;
+        fireball.activeMultiplier = 10;
         break;
     }
   }
@@ -1037,12 +1116,14 @@
         break;
       case 83: //s
         keyS = false;
+        fireball.activeMultiplier = 0;
         break;
       case 65: //a
         keyA = false;
         break;
       case 87: //w
         keyW = false;
+        fireball.activeMultiplier = 0;
         break;
     }
   }
