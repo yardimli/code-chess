@@ -1,0 +1,22 @@
+{
+  "undef": true,
+  "esversion": 6,
+  "browser": true,
+  "devel": true,
+  "globals": {
+    "THREE": true,
+    "Boiler": true,
+    "ShipSquad": true,
+    "scene": true,
+    "axes": true,
+    "camera": true,
+    "clock": true,
+    "ParticleSystem": true,
+    "Util": true,
+    "gaussian": true,
+    "CURVES": true,
+    "LEADERS": true,
+    "TARGETS": true,
+    "LOOPTIMES": true
+  }
+}

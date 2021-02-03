@@ -1,0 +1,38 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #efefef;
+  font-family: monospace;
+}
+
+#webgl-container {
+  display: inline-block;
+  background-color: #1c1c1c;
+  float: left;
+}
+
+#control-panel {
+  background-color: #575757;
+  width: 170px;
+  height: 26px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: white;
+  padding-left: 10px;
+  padding-top: 10px;
+  font-size: 15px;
+}
+
+.checkbox {
+  margin-left: 10px;
+  transform: scale(1.5)
+}
+
+@media (max-width: 700px) {
+  #control-panel {
+    display: none;
+  }
+}
