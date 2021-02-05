@@ -271,7 +271,7 @@ void main() {
       transparent: true
     });
 
-    glowGeom = new THREE.CylinderGeometry(0.2, 0.2, 2.1);
+    glowGeom = new THREE.CylinderGeometry(0.2, 0.2, 3.1);
     var modifier = new THREE.SubdivisionModifier(4);
     modifier.modify(glowGeom);
 
@@ -439,7 +439,7 @@ void main() {
     let direction;
     for (var i = 0; i < bodies.length; i++) {
       if (bodies[i].name.indexOf("physical_object_rocket2_group") === 0) {
-        // direction = bodies[i].direction;
+        direction = bodies[i].direction;
 	      idx = i;
         break;
       }
@@ -474,43 +474,74 @@ void main() {
     let line = new THREE.Line(geometry, material);
     line.position.copy(ShipFrontCoords);
 
-    var boxShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+    if (1===2) {
+      let line = new THREE.Line(geometry, material);
+      line.position.copy(ShipFrontCoords);
 
-    let glow = new THREE.Mesh(glowGeom.clone(), glowMaterial.clone());
+      let glow = new THREE.Mesh(glowGeom.clone(), glowMaterial.clone());
 
-    // thx - http://stemkoski.blogspot.com/2013/07/shaders-in-threejs-glow-and-halo.html
+      // thx - http://stemkoski.blogspot.com/2013/07/shaders-in-threejs-glow-and-halo.html
 
-    // align the glow with the lazer
-    glow.lookAt(new_direction);
-    glow.rotateX(1.5708);
-    // glow.position.sub(head.clone().multiplyScalar(-0.5));
-	  glow.position = ship.position;
+      // align the glow with the lazer
+      glow.lookAt(new_direction);
+      glow.rotateX(1.5708);
+      // glow.position.sub(head.clone().multiplyScalar(-0.5));
+      glow.position = ship.position;
 
-    line.add(glow);
-    line.glow = glow;
-    scene.add(line);
+      line.add(glow);
+      line.glow = glow;
+      scene.add(line);
 
-    line.timeRemaining = 5;
-    line.velocity = new_direction;// direction.normalize().clone().multiplyScalar(-30);
-    pews.add(line);
+      line.timeRemaining = 5;
+      line.velocity = new_direction;// direction.normalize().clone().multiplyScalar(-30);
+      pews.add(line);
+    }
 
+
+
+
+
+    ballShape = new CANNON.Cylinder(  0.2, 0.2, 3.1, 3);
     console.log( ShipFrontCoords );
 
     var x = ShipFrontCoords.x;
     var y = ShipFrontCoords.y;
     var z = ShipFrontCoords.z;
-    var ballBody = new CANNON.Body({ mass: 1 });
+    var ballBody = new CANNON.Body({ mass: 10 });
+    console.log( ballShape );
+
+    var quat = new CANNON.Quaternion();
+    quat.setFromAxisAngle(new CANNON.Vec3(1,0,0),-Math.PI/2);
+    var translation = new CANNON.Vec3(0,0,0);
+    ballShape.transformAllPoints(translation,quat);
+
     ballBody.addShape(ballShape);
-    var ballMesh = new THREE.Mesh( ballGeometry, material );
+
+
+    console.log( ballBody );
+
+    var quatX = new CANNON.Quaternion();
+    var quatY = new CANNON.Quaternion();
+    quatX.setFromAxisAngle(new CANNON.Vec3(1,0,0), 1.5708);
+    quatY.setFromAxisAngle(new CANNON.Vec3(0,1,0), degrees_to_radians(direction));
+    var quaternion = quatY.mult(quatX);
+    quaternion.normalize();
+    ballBody.quaternion = quaternion;
+
+    var ballMesh = new THREE.Mesh(glowGeom.clone(), glowMaterial.clone()); // new THREE.Mesh( ballGeometry, material );
+    // ballMesh.lookAt(new_direction);
+    // ballMesh.rotateX(1.5708);
+
+
     world.add(ballBody);
     scene.add(ballMesh);
     ballMesh.castShadow = true;
     ballMesh.receiveShadow = true;
     balls.push(ballBody);
     ballMeshes.push(ballMesh);
-    ballBody.velocity.set(  new_direction.x * 60,
-      new_direction.y * 60,
-      new_direction.z * 60);
+    ballBody.velocity.set(  new_direction.x * 80,
+      new_direction.y * 80,
+      new_direction.z * 80);
 
     // Move the ball outside the player sphere
     x += new_direction.x;// * (sphereShape.radius*1.02 + ballShape.radius);
