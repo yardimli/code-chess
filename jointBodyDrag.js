@@ -52,7 +52,7 @@ function onMouseDown(e) {
   // calculate objects intersecting the picking ray
   var entity = raycaster.intersectObjects(scene.children, true);
 
-  console.log(entity);
+  // console.log(entity);
   if (entity.length > 0) {
     var jj = -1;
     for (var i = 0; i < entity.length; i++) {

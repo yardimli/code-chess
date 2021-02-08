@@ -34,7 +34,7 @@
 <script src="cannon.js"></script>
 
 <script src='new_base_setup.js'></script>
-<script src='new_ship.js'></script>
+<script src='new_ship2.js'></script>
 <script src='new_keycontrol.js'></script>
 <script src='jointBodyDrag.js'></script>
 
@@ -56,6 +56,8 @@ void main() {
     intensity = pow( dot(normalize(viewVector), actual_normal), 4.0 );
 }
 
+
+
 </script>
 
 <script id="fragmentShaderPew" type="x-shader/x-vertex">
@@ -64,6 +66,8 @@ void main() {
 	vec3 glow = vec3(0,1,0) * intensity;
     gl_FragColor = vec4( glow, 1.0 );
 }
+
+
 
 </script>
 
@@ -76,6 +80,8 @@ void main() {
     intensity = pow( dot(normalize(viewVector), actual_normal), 6.0 );
 }
 
+
+
 </script>
 
 <script id="fragmentShaderSun" type="x-shader/x-vertex">
@@ -84,6 +90,8 @@ void main() {
 	vec3 glow = vec3(1,0.6,0.4) * intensity;
     gl_FragColor = vec4( glow, 1.0 );
 }
+
+
 
 </script>
 
@@ -97,6 +105,8 @@ void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);;
 }
 
+
+
 </script>
 
 <script id="fragmentShaderParticle" type="x-shader/x-vertex">
@@ -104,6 +114,8 @@ varying vec4 vColor;
 void main() {
     gl_FragColor = vColor;
 }
+
+
 
 </script>
 
@@ -143,15 +155,11 @@ void main() {
   var ShipFrontCoords = null;
 
   var playerShip;
-  var glowMaterial, glowGeom;
-  var pews = new Set();
 
-  var ballShape;
-  var ballGeometry;
-  var shootDirection;
-  var shootVelo;
-  var sphereShape, sphereBody;
-  var balls=[], ballMeshes=[];
+  var balls = [];
+  var ballMeshes = [];
+
+  var GameShips = [];
 
 
   // Initialize Three.js
@@ -210,8 +218,8 @@ void main() {
     renderer = new THREE.WebGLRenderer(); //{antialias: true}
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.gammaInput = true;
-    renderer.gammaOutput = true;
+    // renderer.gammaInput = true;
+    // renderer.gammaOutput = true;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
 
@@ -249,32 +257,18 @@ void main() {
     AddLights();
     SkyBox_Ground();
     InitJointBody();
-    InitShip();
+    // InitShip();
     InitCubes();
 
-    //explosion
-//    explosion_group.addEmitter(fireball);//.addEmitter( flash );
-    console.log(explosion_group);
+    GameShips.push(new GameShip("rocket1", "./catdog15_ship.gltf", 0, 140, 0, new THREE.Vector3(30, 15, 0)).init() );
+    GameShips.push(new GameShip("rocket2", "./ship2.gltf", 0, 40, 0, new THREE.Vector3(0, 15, 0)).init());
+    GameShips.push(new GameShip("rocket3", "./ship4.gltf", 0, 20, 0, new THREE.Vector3(-30, 15, 0)).init());
 
-    explosion_group.addPool(10, fireball, false);
-
-    scene.add(explosion_group.mesh);
-
-    glowMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        viewVector: {type: "v3", value: camera.position}
-      },
-      vertexShader: document.getElementById('vertexShaderPew').textContent,
-      fragmentShader: document.getElementById('fragmentShaderPew').textContent,
-      side: THREE.FrontSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true
-    });
-
-    glowGeom = new THREE.CylinderGeometry(0.2, 0.2, 3.1);
-    var modifier = new THREE.SubdivisionModifier(4);
-    modifier.modify(glowGeom);
-
+    setTimeout(function () {
+      for (var i = 0; i < GameShips.length; i++) {
+        console.log(GameShips[i]);
+      }
+    },2000);
 
   }
 
@@ -293,20 +287,20 @@ void main() {
     //controls.update();
     updatePhysics();
 
-    for (let pew of pews) {
-      pew.position.add(pew.velocity.clone().multiplyScalar(1));
-      // pew.glow.material.uniforms.viewVector.value = new THREE.Vector3().subVectors( camera.position, pew.glow.getWorldPosition() );
-      pew.timeRemaining -= 0.01;
-
-      if (pew.timeRemaining < 0) {
-        scene.remove(pew);
-        pew.geometry.dispose();
-        pew.glow.geometry.dispose();
-        pew.material.dispose();
-        pew.glow.material.dispose();
-        pews.delete(pew);
-      }
-    }
+    // for (let pew of pews) {
+    //   pew.position.add(pew.velocity.clone().multiplyScalar(1));
+    //   // pew.glow.material.uniforms.viewVector.value = new THREE.Vector3().subVectors( camera.position, pew.glow.getWorldPosition() );
+    //   pew.timeRemaining -= 0.01;
+    //
+    //   if (pew.timeRemaining < 0) {
+    //     scene.remove(pew);
+    //     pew.geometry.dispose();
+    //     pew.glow.geometry.dispose();
+    //     pew.material.dispose();
+    //     pew.glow.material.dispose();
+    //     pews.delete(pew);
+    //   }
+    // }
 
 
 //    setExplosionCoords();
@@ -315,6 +309,101 @@ void main() {
 
     render();
   }
+
+  function InitCubes() {
+    // cubes
+    var cubeGeo = new THREE.BoxGeometry(1, 1, 1, 10, 10);
+
+    // Create vube physics
+    var mass = 5, radius = 1.3;
+    boxShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+
+    var cubeMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
+    for (var i = 0; i < N; i++) {
+      cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+      cubeMesh.castShadow = true;
+      cubeMesh.name = "physical_object_cube_" + i;
+      meshes.push(cubeMesh);
+      scene.add(cubeMesh);
+
+
+      boxBody = new CANNON.Body({mass: mass});
+      boxBody.addShape(boxShape);
+      boxBody.name = "physical_object_cube_" + i;
+      boxBody.position.set(30, 5, 30);
+      world.addBody(boxBody);
+      bodies.push(boxBody);
+    }
+
+
+    cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.25, depthTest: false});
+
+    // Create vube physics
+    mass = 5000;
+    i=2;
+    var cubeGeo = new THREE.BoxGeometry(3, 30, 300, 10, 10);
+    boxShape = new CANNON.Box(new CANNON.Vec3(1.5, 15, 150));
+
+    cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+    cubeMesh.castShadow = true;
+    cubeMesh.name = "physical_object_cube_" + i;
+    meshes.push(cubeMesh);
+    scene.add(cubeMesh);
+
+    boxBody = new CANNON.Body({mass: mass});
+    boxBody.addShape(boxShape);
+    boxBody.name = "physical_object_cube_" + i;
+    boxBody.position.set(150, 25, 0);
+    world.addBody(boxBody);
+    bodies.push(boxBody);
+
+    i=3
+    cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+    cubeMesh.castShadow = true;
+    cubeMesh.name = "physical_object_cube_" + i;
+    meshes.push(cubeMesh);
+    scene.add(cubeMesh);
+
+    boxBody = new CANNON.Body({mass: mass});
+    boxBody.addShape(boxShape);
+    boxBody.name = "physical_object_cube_" + i;
+    boxBody.position.set(-150, 25, 0);
+    world.addBody(boxBody);
+    bodies.push(boxBody);
+
+
+    var cubeGeo = new THREE.BoxGeometry(290, 30, 3, 10, 10);
+    boxShape = new CANNON.Box(new CANNON.Vec3(145, 15, 1.5));
+
+    i=4;
+    cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+    cubeMesh.castShadow = true;
+    cubeMesh.name = "physical_object_cube_" + i;
+    meshes.push(cubeMesh);
+    scene.add(cubeMesh);
+
+    boxBody = new CANNON.Body({mass: mass});
+    boxBody.addShape(boxShape);
+    boxBody.name = "physical_object_cube_" + i;
+    boxBody.position.set(0, 25, 150);
+    world.addBody(boxBody);
+    bodies.push(boxBody);
+
+    i=5;
+    cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+    cubeMesh.castShadow = true;
+    cubeMesh.name = "physical_object_cube_" + i;
+    meshes.push(cubeMesh);
+    scene.add(cubeMesh);
+
+    boxBody = new CANNON.Body({mass: mass});
+    boxBody.addShape(boxShape);
+    boxBody.name = "physical_object_cube_" + i;
+    boxBody.position.set(0, 25, -150);
+    world.addBody(boxBody);
+    bodies.push(boxBody);
+  }
+
 
   //----------------------------------------------------------------------------------
   function updatePhysics() {
@@ -325,9 +414,24 @@ void main() {
     }
 
     // Update ball positions
-    for(var i=0; i<balls.length; i++){
+    for (var i = 0; i < balls.length; i++) {
       ballMeshes[i].position.copy(balls[i].position);
       ballMeshes[i].quaternion.copy(balls[i].quaternion);
+      ballMeshes[i].life -= 1;
+    }
+
+    for (var i = 0; i < balls.length; i++) {
+      if (ballMeshes[i].life<0) {
+        console.log("remove "+ballMeshes[i].name);
+        var selectedObject = scene.getObjectByName(ballMeshes[i].name);
+        selectedObject.geometry.dispose();
+        selectedObject.material.dispose();
+        scene.remove( selectedObject );
+        world.remove( selectedObject );
+        balls.splice(i,1);
+        ballMeshes.splice(i,1);
+        break;
+      }
     }
 
   }
@@ -336,7 +440,9 @@ void main() {
   function render() {
     // let deltaTime = clock.getDelta();
 
-    explosion_group.tick();
+    for (var i = 0; i < GameShips.length; i++) {
+      GameShips[i].explosion_group.tick();
+    }
     renderer.render(scene, camera);
     // requestAnimationFrame(render);
   }
@@ -351,206 +457,17 @@ void main() {
     world.gravity.set(0, -1, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
 
-    ballShape = new CANNON.Sphere(0.1);
-    ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
-    shootDirection = new THREE.Vector3();
-    shootVelo = 150;
-
     // Create a sphere
     var mass = 5, radius = 1.3;
     sphereShape = new CANNON.Sphere(radius);
-    sphereBody = new CANNON.Body({ mass: mass });
+    sphereBody = new CANNON.Body({mass: mass});
     sphereBody.addShape(sphereShape);
-    sphereBody.position.set(0,5,0);
+    sphereBody.position.set(0, 5, 0);
     sphereBody.linearDamping = 0.9;
     world.add(sphereBody);
 
   }
 
-
-  setInterval(function () {
-    var idx = -1;
-    for (var i = 0; i < bodies.length; i++) {
-      if (bodies[i].name.indexOf("physical_object_rocket") === 0) {
-        // console.log(bodies[i].name + " " + idx);
-
-        if (1 === 2) {
-          var direction = bodies[i].direction + (Math.random() * 6);
-          bodies[i].direction = direction;
-          var axis = new CANNON.Vec3(0, 1, 0);
-          bodies[i].quaternion.setFromAxisAngle(axis, degrees_to_radians(direction));
-
-          var localForward = new CANNON.Vec3(0, 0, -1); // correct?
-          var worldForward = new CANNON.Vec3();
-          bodies[i].vectorToWorldFrame(localForward, worldForward);
-          var localVelocity = new CANNON.Vec3(0, 0, 0.5);
-          var worldVelocity = bodies[i].quaternion.vmult(localVelocity);
-          worldVelocity.y = 0;
-          // console.log ( worldVelocity );
-
-          bodies[i].velocity.x += worldVelocity.x;
-          bodies[i].velocity.z += worldVelocity.z;
-
-          // if (bodies[i].velocity.x<0) {
-          //   bodies[i].velocity.x -=  1;
-          // } else {
-          //   bodies[i].velocity.x +=  1;
-          // }
-          // if (bodies[i].velocity.x<0) {
-          //   bodies[i].velocity.z -=  1;
-          // } else {
-          //   bodies[i].velocity.z +=  1;
-          // }
-
-          // bodies[i].acceleration *= bodies[i].damping;
-        }
-
-        if (1 === 2) {
-          var direction = bodies[i].direction + (Math.random() * 32);
-          bodies[i].direction = direction;
-          var axis = new CANNON.Vec3(0, 1, 0);
-          bodies[i].quaternion.setFromAxisAngle(axis, degrees_to_radians(direction));
-          // console.log(axis);
-
-          var speed = Math.random() * 6;
-          // console.log(bodies[i].velocity);
-
-          var localForward = new CANNON.Vec3(0, 0, -1); // correct?
-          var worldForward = new CANNON.Vec3();
-          bodies[i].vectorToWorldFrame(localForward, worldForward);
-          // var localVelocity = new CANNON.Vec3(0, 0, speed);
-          // if (bodies[i].velocity.z+speed>5) { speed = 0;}
-          var localVelocity = new CANNON.Vec3(0, 0, speed);
-          var worldVelocity = bodies[i].quaternion.vmult(localVelocity);
-          worldVelocity.y = 0;
-          // worldVelocity.x = worldVelocity.x + bodies[i].velocity.x;
-          // worldVelocity.y = worldVelocity.y + bodies[i].velocity.y;
-
-          bodies[i].velocity.copy(worldVelocity);
-        }
-      }
-    }
-  }, 100);
-
-
-  function firePew(ship) {
-
-    var idx = -1;
-    let direction;
-    for (var i = 0; i < bodies.length; i++) {
-      if (bodies[i].name.indexOf("physical_object_rocket2_group") === 0) {
-        direction = bodies[i].direction;
-	      idx = i;
-        break;
-      }
-    }
-
-    var localForward = new CANNON.Vec3(0, 0, -1); // correct?
-    var worldForward = new CANNON.Vec3();
-    bodies[idx].vectorToWorldFrame(localForward, worldForward);
-    var localVelocity = new CANNON.Vec3(0, 0, 1);
-    var worldVelocity = bodies[i].quaternion.vmult(localVelocity);
-    worldVelocity.y = 0;
-    let new_direction = new THREE.Vector3();
-    new_direction.x = worldVelocity.x;
-    new_direction.y = worldVelocity.y;
-    new_direction.z = worldVelocity.z;
-    console.log ( new_direction);
-
-    // bodies[i].velocity.x += worldVelocity.x;
-    // bodies[i].velocity.z += worldVelocity.z;
-
-
-    let material = new THREE.LineBasicMaterial({color: 0xadffd0});
-
-    let geometry = new THREE.Geometry();
-	  let head = new_direction.clone().multiplyScalar(2);
-
-    geometry.vertices.push(
-      new THREE.Vector3(0, 0, 0),
-	    head
-    );
-
-    let line = new THREE.Line(geometry, material);
-    line.position.copy(ShipFrontCoords);
-
-    if (1===2) {
-      let line = new THREE.Line(geometry, material);
-      line.position.copy(ShipFrontCoords);
-
-      let glow = new THREE.Mesh(glowGeom.clone(), glowMaterial.clone());
-
-      // thx - http://stemkoski.blogspot.com/2013/07/shaders-in-threejs-glow-and-halo.html
-
-      // align the glow with the lazer
-      glow.lookAt(new_direction);
-      glow.rotateX(1.5708);
-      // glow.position.sub(head.clone().multiplyScalar(-0.5));
-      glow.position = ship.position;
-
-      line.add(glow);
-      line.glow = glow;
-      scene.add(line);
-
-      line.timeRemaining = 5;
-      line.velocity = new_direction;// direction.normalize().clone().multiplyScalar(-30);
-      pews.add(line);
-    }
-
-
-
-
-
-    ballShape = new CANNON.Cylinder(  0.2, 0.2, 3.1, 3);
-    console.log( ShipFrontCoords );
-
-    var x = ShipFrontCoords.x;
-    var y = ShipFrontCoords.y;
-    var z = ShipFrontCoords.z;
-    var ballBody = new CANNON.Body({ mass: 10 });
-    console.log( ballShape );
-
-    var quat = new CANNON.Quaternion();
-    quat.setFromAxisAngle(new CANNON.Vec3(1,0,0),-Math.PI/2);
-    var translation = new CANNON.Vec3(0,0,0);
-    ballShape.transformAllPoints(translation,quat);
-
-    ballBody.addShape(ballShape);
-
-
-    console.log( ballBody );
-
-    var quatX = new CANNON.Quaternion();
-    var quatY = new CANNON.Quaternion();
-    quatX.setFromAxisAngle(new CANNON.Vec3(1,0,0), 1.5708);
-    quatY.setFromAxisAngle(new CANNON.Vec3(0,1,0), degrees_to_radians(direction));
-    var quaternion = quatY.mult(quatX);
-    quaternion.normalize();
-    ballBody.quaternion = quaternion;
-
-    var ballMesh = new THREE.Mesh(glowGeom.clone(), glowMaterial.clone()); // new THREE.Mesh( ballGeometry, material );
-    // ballMesh.lookAt(new_direction);
-    // ballMesh.rotateX(1.5708);
-
-
-    world.add(ballBody);
-    scene.add(ballMesh);
-    ballMesh.castShadow = true;
-    ballMesh.receiveShadow = true;
-    balls.push(ballBody);
-    ballMeshes.push(ballMesh);
-    ballBody.velocity.set(  new_direction.x * 80,
-      new_direction.y * 80,
-      new_direction.z * 80);
-
-    // Move the ball outside the player sphere
-    x += new_direction.x;// * (sphereShape.radius*1.02 + ballShape.radius);
-    y += new_direction.y;// * (sphereShape.radius*1.02 + ballShape.radius);
-    z += new_direction.z;// * (sphereShape.radius*1.02 + ballShape.radius);
-    ballBody.position.set(x,y,z);
-    ballMesh.position.set(x,y,z);
-
-  }
 
 </script>
 

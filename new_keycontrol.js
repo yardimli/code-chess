@@ -3,60 +3,80 @@ var keyS = false;
 var keyD = false;
 var keyW = false;
 
+var Interval1 = false;
+var Interval2 = false;
+var Interval3 = false;
+
 setInterval(function () {
 
-  if (keyD || keyA || keyS ||keyW) {
+  if (!Interval1) {
+    Interval1 = true;
+    if (keyD || keyA || keyS || keyW) {
 
-    var idx = -1;
-    for (var i = 0; i < bodies.length; i++) {
-      if (bodies[i].name.indexOf("physical_object_rocket2_group") === 0) {
-        // console.log(bodies[i].name);
+      var idx = -1;
+      for (var i = 0; i < GameShips.length; i++) {
+        //if (GameShips[i].shipname === "rocket2")
+        {
+          let body_index = GameShips[i].body_index();
 
-        if (keyD) {
+          if (keyD) {
+            GameShips[i].rotate_ship(-0.5);
+          }
 
-          bodies[i].direction -= 0.5;
-          var axis = new CANNON.Vec3(0, 1, 0);
-          bodies[i].quaternion.setFromAxisAngle(axis, degrees_to_radians(bodies[i].direction));
-        }
+          if (keyA) {
+            GameShips[i].rotate_ship(0.5);
+          }
 
-        if (keyA) {
+          if (keyS) {
+          }
 
-          bodies[i].direction += 0.5;
-          var axis = new CANNON.Vec3(0, 1, 0);
-          bodies[i].quaternion.setFromAxisAngle(axis, degrees_to_radians(bodies[i].direction));
-        }
-
-        if (keyS) {
-
-          var localForward = new CANNON.Vec3(0, 0, -1); // correct?
-          var worldForward = new CANNON.Vec3();
-          bodies[i].vectorToWorldFrame(localForward, worldForward);
-          var localVelocity = new CANNON.Vec3(0, 0, -0.02);
-          var worldVelocity = bodies[i].quaternion.vmult(localVelocity);
-          worldVelocity.y = 0;
-          // console.log ( worldVelocity );
-
-          bodies[i].velocity.x += worldVelocity.x;
-          bodies[i].velocity.z += worldVelocity.z;
-        }
-
-        if (keyW) {
-          var localForward = new CANNON.Vec3(0, 0, -1); // correct?
-          var worldForward = new CANNON.Vec3();
-          bodies[i].vectorToWorldFrame(localForward, worldForward);
-          var localVelocity = new CANNON.Vec3(0, 0, 0.2);
-          var worldVelocity = bodies[i].quaternion.vmult(localVelocity);
-          worldVelocity.y = 0;
-          // console.log ( worldVelocity );
-
-          bodies[i].velocity.x += worldVelocity.x;
-          bodies[i].velocity.z += worldVelocity.z;
+          if (keyW) {
+            GameShips[i].fire_engines(0.02);
+          }
         }
       }
     }
+    Interval1 = false;
   }
 
 }, 1);
+
+setInterval(function () {
+  if (!Interval2) {
+    Interval2 = true;
+    for (var i = 0; i < GameShips.length; i++) {
+
+      if (keyS) {
+        GameShips[i].fire_guns();
+      }
+    }
+    Interval2 = false;
+  }
+}, 250);
+
+setInterval(function () {
+
+  if (!Interval3) {
+    Interval3 = true;
+    if (keyD || keyA || keyS || keyW) {
+
+      var idx = -1;
+      for (var i = 0; i < GameShips.length; i++) {
+
+        //if (GameShips[i].shipname === "rocket2")
+        {
+          // let body_index = GameShips[i].body_index();
+          if (keyW) {
+            GameShips[i].addGas();
+            console.log("add gas");
+          }
+        }
+      }
+    }
+    Interval3 = false;
+  }
+
+}, 50);
 
 //event listener
 window.addEventListener("keydown", onKeyDown, false);
@@ -70,34 +90,20 @@ function onKeyDown(event) {
       keyW = false;
       break;
     case 83: //s // no breaking in space
-      // keyS = true;
-      // fireball.activeMultiplier = 10;
-
-      setExplosionCoords();
-      if (typeof playerShip !== "undefined") {
-        firePew(playerShip)
-      }
-
-
+      keyS = true;
       break;
     case 65: //a
       keyA = true;
       keyW = false;
       break;
     case 87: //w
-      if (!keyW) {
-        if (typeof playerShip !== "undefined") {
-          controls.target = playerShip.position;
-          controls.update();
-        }
-      }
+      // if (!keyW) {
+      //   if (typeof playerShip !== "undefined") {
+      //     controls.target = playerShip.position;
+      //     controls.update();
+      //   }
+      // }
       keyW = true;
-
-
-      setExplosionCoords();
-      explosion_group.triggerPoolEmitter( 1, worldCoords );
-
-      // fireball.activeMultiplier = 10;
       break;
   }
 }
