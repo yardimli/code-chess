@@ -31,7 +31,7 @@ setInterval(function () {
           }
 
           if (keyW) {
-            GameShips[i].fire_engines(0.02);
+            GameShips[i].fire_engines(0.08);
           }
         }
       }
@@ -77,6 +77,19 @@ setInterval(function () {
   }
 
 }, 50);
+
+
+setTimeout(function () {
+  setInterval(function () {
+
+    for (var i = 0; i < GameShips.length; i++) {
+//      GameShips[i].addGas();
+      GameShips[i].fire_guns();
+    }
+    console.log(world.bodies.length + " " + scene.children.length + " " + ballMeshes.length);
+
+  }, 500);
+},2500);
 
 //event listener
 window.addEventListener("keydown", onKeyDown, false);

@@ -21,7 +21,7 @@ function onMouseMove(event) {
     // console.log(pos);
     if (pos) {
       updateClickMarker(pos.x, pos.y, pos.z, scene);
-      moveJointToPoint(pos.x, pos.y, pos.z);
+    //  moveJointToPoint(pos.x, pos.y, pos.z);
     }
   }
 }
@@ -40,7 +40,7 @@ function onMouseMove2(event) {
     // console.log(pos);
     if (pos) {
       updateClickMarker(pos.x, pos.y, pos.z, scene);
-      moveJointToPoint(pos.x, pos.y, pos.z);
+    //  moveJointToPoint(pos.x, pos.y, pos.z);
     }
   }
 }
@@ -97,10 +97,10 @@ function onMouseDown(e) {
         // var idx = meshes.indexOf(entity[jj].object);
         if (idx !== -1) {
 
-          if (idx2!==-1) {
-            controls.target = meshes[idx2].position;
-            controls.update();
-          }
+          // if (idx2!==-1) {
+          //   controls.target = meshes[idx2].position;
+          //   controls.update();
+          // }
 
 
           AllowYMotion = !bodies[idx].fixedRotation;

@@ -218,6 +218,8 @@ void main() {
     renderer = new THREE.WebGLRenderer(); //{antialias: true}
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+
     // renderer.gammaInput = true;
     // renderer.gammaOutput = true;
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -242,7 +244,7 @@ void main() {
     controls.enableKeys = false;
     controls.target = new THREE.Vector3(0, 2, 0);
 
-    controls.autoRotate = true;
+///    controls.autoRotate = true;
 
     controls.update();
 
@@ -339,7 +341,7 @@ void main() {
     cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.25, depthTest: false});
 
     // Create vube physics
-    mass = 5000;
+    mass = 25000;
     i=2;
     var cubeGeo = new THREE.BoxGeometry(3, 30, 300, 10, 10);
     boxShape = new CANNON.Box(new CANNON.Vec3(1.5, 15, 150));
@@ -420,14 +422,14 @@ void main() {
       ballMeshes[i].life -= 1;
     }
 
-    for (var i = 0; i < balls.length; i++) {
+    for (var i = balls.length-1; i >=0; i--) {
       if (ballMeshes[i].life<0) {
-        console.log("remove "+ballMeshes[i].name);
+        // console.log("remove "+ballMeshes[i].name);
         var selectedObject = scene.getObjectByName(ballMeshes[i].name);
         selectedObject.geometry.dispose();
         selectedObject.material.dispose();
         scene.remove( selectedObject );
-        world.remove( selectedObject );
+        world.removeBody( balls[i] );
         balls.splice(i,1);
         ballMeshes.splice(i,1);
         break;

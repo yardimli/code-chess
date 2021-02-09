@@ -191,6 +191,8 @@ function GameShip(shipname, filename, direction, mass, speed, position) {
   this.sphereBody = null;
   this.explosion_group = null;
 
+  this.bullet_material = null;
+
 
 }
 
@@ -272,6 +274,8 @@ GameShip.prototype.init = function () {
 
 
   this.ballShape = new CANNON.Cylinder(0.2, 0.2, 3.1, 3); //this.ballShape = new CANNON.Sphere(0.1);
+
+  this.bullet_material = new THREE.LineBasicMaterial({color: 0xadffd0});
 
   return this;
 }
@@ -398,7 +402,6 @@ GameShip.prototype.fire_guns = function () {
   new_direction.z = worldVelocity.z;
 //  console.log(new_direction);
 
-  let material = new THREE.LineBasicMaterial({color: 0xadffd0});
 
   let geometry = new THREE.Geometry();
   let head = new_direction.clone().multiplyScalar(2);
@@ -408,7 +411,7 @@ GameShip.prototype.fire_guns = function () {
     head
   );
 
-  let line = new THREE.Line(geometry, material);
+  let line = new THREE.Line(geometry, this.bullet_material);
   line.position.copy(this.ShipFrontCoords);
 
   // console.log(this.ShipFrontCoords);
